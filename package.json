@@ -1,6 +1,6 @@
 {
   "name": "rolldown-plugin-module-replace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Replace aliases for bundle dependencies",
   "type": "module",
   "main": "./dist/index.mjs",
