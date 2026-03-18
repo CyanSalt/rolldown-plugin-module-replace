@@ -20,6 +20,8 @@ export default defineConfig({
     moduleReplace({
       entries: [
         { find: 'foo', replacement: 'bar' },
+        // For files with specific source type
+        { find: 'baz-es', replacement: 'baz-cjs', sourceType: 'commonjs' },
       ],
     }),
   ],
@@ -52,4 +54,6 @@ And you may use these two modules at multiple entry points in your code. At this
 
 - If `my-module-v1` is treated as an external module, the bundles will retain the import of `my-module-v1`, while this dependency does not exist at runtime.
 
-To solve this problem, this plugin re-parses the bundle code and performs module replacement after the chunk is built. This is essentially what [typescript-transform-aliases](https://github.com/CyanSalt/typescript-transform-aliases) does.
+Another example is that you might need to use different dependencies in certain environments, such as `lodash` and `lodash-es`.
+
+To solve these problems, this plugin re-parses the bundle code and performs module replacement after the chunk is built. This is essentially what [typescript-transform-aliases](https://github.com/CyanSalt/typescript-transform-aliases) does.

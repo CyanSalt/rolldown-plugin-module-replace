@@ -58,3 +58,39 @@ describe('replace', () => {
   })
 
 })
+
+describe('replace with source type', () => {
+
+  test('commonjs for commonjs', async () => {
+    await expect(transform('./fixtures/input/chunk.cjs', [
+      { find: 'cjs-module', replacement: 'cjs-replacement', sourceType: 'commonjs' },
+    ]))
+      .resolves
+      .toBe(await read('./fixtures/output/chunk.cjs'))
+  })
+
+  test('module for commonjs', async () => {
+    await expect(transform('./fixtures/input/chunk.cjs', [
+      { find: 'cjs-module', replacement: 'cjs-replacement', sourceType: 'module' },
+    ]))
+      .resolves
+      .toBe(await read('./fixtures/input/chunk.cjs'))
+  })
+
+  test('commonjs for module', async () => {
+    await expect(transform('./fixtures/input/chunk.mjs', [
+      { find: 'mjs-module', replacement: 'mjs-replacement', sourceType: 'commonjs' },
+    ]))
+      .resolves
+      .toBe(await read('./fixtures/input/chunk.mjs'))
+  })
+
+  test('module for module', async () => {
+    await expect(transform('./fixtures/input/chunk.mjs', [
+      { find: 'mjs-module', replacement: 'mjs-replacement', sourceType: 'module' },
+    ]))
+      .resolves
+      .toBe(await read('./fixtures/output/chunk.mjs'))
+  })
+
+})

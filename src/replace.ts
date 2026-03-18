@@ -1,7 +1,15 @@
 import MagicString from 'magic-string'
+import type { ModuleKind } from 'oxc-parser'
 import { parse } from 'oxc-parser'
 import { walk } from 'oxc-walker'
 import type { Alias } from './types'
+
+function filterAlias(aliases: Alias[], sourceType: ModuleKind) {
+  return aliases.filter(alias => {
+    if (alias.sourceType && alias.sourceType !== sourceType) return false
+    return true
+  })
+}
 
 function matchAlias(request: string, aliases: Alias[]) {
   return aliases.find(alias => {
@@ -23,9 +31,10 @@ function parseStringLiteral(raw: string) {
   return undefined
 }
 
-export async function replace(code: string, filename: string, aliases: Alias[]) {
+export async function replace(code: string, filename: string, entries: Alias[]) {
   const ms = new MagicString(code)
   const { program, module } = await parse(filename, code)
+  const aliases = filterAlias(entries, program.sourceType)
   // import ... from 'module'
   for (const stmt of module.staticImports) {
     const alias = matchAlias(stmt.moduleRequest.value, aliases)
@@ -63,7 +72,7 @@ export async function replace(code: string, filename: string, aliases: Alias[]) 
     enter(node) {
       switch (node.type) {
         case 'TSModuleDeclaration':
-          if (node.id?.type === 'Literal') {
+          if (node.id.type === 'Literal') {
             const alias = matchAlias(node.id.value, aliases)
             if (alias) {
               ms.overwrite(node.id.start + 1, node.id.end - 1, alias.replacement)
@@ -80,6 +89,9 @@ export async function replace(code: string, filename: string, aliases: Alias[]) 
               }
             }
           }
+          break
+        default:
+          break
       }
     },
   })
