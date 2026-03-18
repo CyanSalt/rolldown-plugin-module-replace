@@ -94,3 +94,15 @@ describe('replace with source type', () => {
   })
 
 })
+
+describe('replace with regexp', () => {
+
+  test('dirs', async () => {
+    await expect(transform('./fixtures/input/asset-dir.d.ts', [
+      { find: /^dts-module(?=$|\/)/, replacement: 'dts-replacement' },
+    ]))
+      .resolves
+      .toBe(await read('./fixtures/output/asset-dir.d.ts'))
+  })
+
+})

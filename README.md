@@ -21,7 +21,7 @@ export default defineConfig({
       entries: [
         { find: 'foo', replacement: 'bar' },
         // For files with specific source type
-        { find: 'baz-es', replacement: 'baz-cjs', sourceType: 'commonjs' },
+        { find: /^baz-es(?=$|\/)/, replacement: 'baz-cjs', sourceType: 'commonjs' },
       ],
     }),
   ],

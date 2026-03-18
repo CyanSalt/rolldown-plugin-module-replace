@@ -11,13 +11,20 @@ function filterAlias(aliases: Alias[], sourceType: ModuleKind) {
   })
 }
 
-function matchAlias(request: string, aliases: Alias[]) {
+function findAlias(request: string, aliases: Alias[]) {
   return aliases.find(alias => {
     if (typeof alias.find === 'string') {
       return alias.find === request
     }
     return alias.find.test(request)
   })
+}
+
+function replaceByAlias(request: string, alias: Alias) {
+  if (typeof alias.find === 'string') {
+    return alias.replacement
+  }
+  return request.replace(alias.find, alias.replacement)
 }
 
 function parseStringLiteral(raw: string) {
@@ -37,19 +44,27 @@ export async function replace(code: string, filename: string, entries: Alias[]) 
   const aliases = filterAlias(entries, program.sourceType)
   // import ... from 'module'
   for (const stmt of module.staticImports) {
-    const alias = matchAlias(stmt.moduleRequest.value, aliases)
+    const alias = findAlias(stmt.moduleRequest.value, aliases)
     if (alias) {
-      ms.overwrite(stmt.moduleRequest.start + 1, stmt.moduleRequest.end - 1, alias.replacement)
+      ms.overwrite(
+        stmt.moduleRequest.start + 1,
+        stmt.moduleRequest.end - 1,
+        replaceByAlias(stmt.moduleRequest.value, alias),
+      )
     }
   }
   // export ... from 'module'
   for (const stmt of module.staticExports) {
     for (const entry of stmt.entries) {
       const alias = entry.moduleRequest?.value
-        ? matchAlias(entry.moduleRequest.value, aliases)
+        ? findAlias(entry.moduleRequest.value, aliases)
         : undefined
       if (alias) {
-        ms.overwrite(entry.moduleRequest!.start + 1, entry.moduleRequest!.end - 1, alias.replacement)
+        ms.overwrite(
+          entry.moduleRequest!.start + 1,
+          entry.moduleRequest!.end - 1,
+          replaceByAlias(entry.moduleRequest!.value, alias),
+        )
       }
     }
   }
@@ -58,12 +73,12 @@ export async function replace(code: string, filename: string, entries: Alias[]) 
     const source = code.slice(stmt.moduleRequest.start, stmt.moduleRequest.end)
     const parsed = parseStringLiteral(source)
     if (parsed) {
-      const alias = matchAlias(parsed.value, aliases)
+      const alias = findAlias(parsed.value, aliases)
       if (alias) {
         ms.overwrite(
           stmt.moduleRequest.start + 1,
           stmt.moduleRequest.end - 1,
-          alias.replacement,
+          replaceByAlias(parsed.value, alias),
         )
       }
     }
@@ -73,9 +88,13 @@ export async function replace(code: string, filename: string, entries: Alias[]) 
       switch (node.type) {
         case 'TSModuleDeclaration':
           if (node.id.type === 'Literal') {
-            const alias = matchAlias(node.id.value, aliases)
+            const alias = findAlias(node.id.value, aliases)
             if (alias) {
-              ms.overwrite(node.id.start + 1, node.id.end - 1, alias.replacement)
+              ms.overwrite(
+                node.id.start + 1,
+                node.id.end - 1,
+                replaceByAlias(node.id.value, alias),
+              )
             }
           }
           break
@@ -83,9 +102,13 @@ export async function replace(code: string, filename: string, entries: Alias[]) 
           if (node.callee.type === 'Identifier' && node.callee.name === 'require' && node.arguments.length >= 1) {
             const arg = node.arguments[0]
             if (arg.type === 'Literal' && typeof arg.value === 'string') {
-              const alias = matchAlias(arg.value, aliases)
+              const alias = findAlias(arg.value, aliases)
               if (alias) {
-                ms.overwrite(arg.start + 1, arg.end - 1, alias.replacement)
+                ms.overwrite(
+                  arg.start + 1,
+                  arg.end - 1,
+                  replaceByAlias(arg.value, alias),
+                )
               }
             }
           }
