@@ -1,6 +1,6 @@
 # rolldown-plugin-module-replace
 
-[![npm](https://img.shields.io/npm/v/markdowntown.svg)](https://www.npmjs.com/package/markdowntown)
+[![npm](https://img.shields.io/npm/v/rolldown-plugin-module-replace.svg)](https://www.npmjs.com/package/rolldown-plugin-module-replace)
 
 Replace aliases for bundle dependencies.
 

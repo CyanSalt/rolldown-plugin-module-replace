@@ -59,20 +59,20 @@
     ]
   },
   "devDependencies": {
-    "@cyansalt/eslint-config": "^4.5.0",
-    "@cyansalt/tsconfig": "^3.0.1",
-    "@release-it/conventional-changelog": "^10.0.6",
-    "@types/node": "^25.5.0",
-    "eslint": "^10.0.3",
-    "release-it": "^19.2.4",
-    "rolldown": "1.0.0-rc.9",
-    "tsdown": "^0.21.4",
+    "@cyansalt/eslint-config": "^4.6.0",
+    "@cyansalt/tsconfig": "^3.0.2",
+    "@release-it/conventional-changelog": "^11.0.0",
+    "@types/node": "^25.6.2",
+    "eslint": "^10.3.0",
+    "release-it": "^20.0.1",
+    "rolldown": "1.0.0",
+    "tsdown": "^0.22.0",
     "typescript": "^5.9.3",
-    "vitest": "^4.1.0"
+    "vitest": "^4.1.5"
   },
   "dependencies": {
     "magic-string": "^0.30.21",
-    "oxc-parser": "^0.120.0",
-    "oxc-walker": "^0.7.0"
+    "oxc-parser": "^0.129.0",
+    "oxc-walker": "^1.0.0"
   }
 }
