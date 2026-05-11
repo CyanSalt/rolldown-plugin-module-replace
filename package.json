@@ -20,6 +20,7 @@
   },
   "scripts": {
     "lint": "eslint --fix './**/*.{js,mjs,ts}'",
+    "lint:ci": "eslint --max-warnings 0 './**/*.{js,mjs,ts}'",
     "test": "vitest",
     "prepack": "tsdown",
     "release": "release-it"
@@ -39,6 +40,24 @@
   ],
   "author": "CyanSalt",
   "license": "ISC",
+  "devEngines": {
+    "runtime": {
+      "name": "node",
+      "version": "^24.15.0",
+      "onFail": "error"
+    },
+    "packageManager": [
+      {
+        "name": "pnpm",
+        "version": "^11.0.0",
+        "onFail": "error"
+      },
+      {
+        "name": "npm",
+        "onFail": "ignore"
+      }
+    ]
+  },
   "devDependencies": {
     "@cyansalt/eslint-config": "^4.5.0",
     "@cyansalt/tsconfig": "^3.0.1",
